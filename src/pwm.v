@@ -8,7 +8,7 @@ module krasin_3_bit_8_channel_pwm_driver (
   wire clk = io_in[0];
   wire set = io_in[1];
   wire [2:0] addr = io_in[4:2];
-  wire [2:0] val = io_in[7:5];
+  wire [2:0] level = io_in[7:5];
 
   wire [7:0] pwm_out;
   assign io_out[7:0] = pwm_out;
@@ -81,14 +81,14 @@ module krasin_3_bit_8_channel_pwm_driver (
       end
       if (set) begin
         case (addr)
-          0: pwm0_level <= val;
-          1: pwm1_level <= val;
-          2: pwm2_level <= val;
-          3: pwm3_level <= val;
-          4: pwm4_level <= val;
-          5: pwm5_level <= val;
-          6: pwm6_level <= val;
-          7: pwm7_level <= val;
+          0: pwm0_level <= level;
+          1: pwm1_level <= level;
+          2: pwm2_level <= level;
+          3: pwm3_level <= level;
+          4: pwm4_level <= level;
+          5: pwm5_level <= level;
+          6: pwm6_level <= level;
+          7: pwm7_level <= level;
         endcase
       end // if (set)
     end
