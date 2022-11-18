@@ -41,7 +41,7 @@ async def test_pwm0_full_on(dut):
 # Reset all pwm levels to zeros.
 async def set_all_levels_zero(dut, clock):
   for i in range(8):
-    dut._log.info("reset pwm{}".format(i))
+    # dut._log.info("reset pwm{}".format(i))
     dut.pset.value = 1
     dut.addr.value = i
     dut.level.value = 0
@@ -75,3 +75,37 @@ async def test_pwm1_level_4(dut):
         cnt += 1
   # We need exactly 4/7, so 40 from 70 cycles.
   assert cnt == 40
+
+
+async def test_pwm_level(dut, clock, pwm, level):
+  await set_all_levels_zero(dut, clock)
+
+  dut._log.info("set pwm{}={}".format(pwm, level))
+  dut.pset.value = 1
+  dut.addr.value = pwm
+  dut.level.value = level
+  await ClockCycles(dut.clk, 1)
+  dut.pset.value = 0
+
+  dut._log.info("check that pwm{} is at level {}".format(pwm, level))
+  cnt = 0
+  for i in range(70):
+    await ClockCycles(dut.clk, 1)
+    # print("dut.out_pwm: {}".format(dut.pwm_out.value))
+    mask = 1 << pwm
+    if (int(dut.pwm_out.value) & mask):
+        cnt += 1
+  # We need exactly level/7, so level*10 for 70 cycles.
+  assert cnt == level * 10
+
+
+@cocotb.test()
+async def test_all_pwm_all_levels(dut):
+  dut._log.info("start")
+  clock = Clock(dut.clk, 10, units="us")
+  cocotb.start_soon(clock.start())
+
+  for pwm in range(8):
+    for level in range(8):
+      await test_pwm_level(dut, clock, pwm=pwm, level=level)
+
