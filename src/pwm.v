@@ -19,14 +19,14 @@ module krasin_3_bit_8_channel_pwm_driver (
   // we're in a reset mode and set this register to the expected state + reset all other registers.
   // This is not a great way, as it does not guarantee anything, but I already use all input pins and
   // like to live dangerously.
-  reg[3:0] reset_canary = 0;
+  reg[8:0] reset_canary = 0;
 
   // 3-bit PWM counter that goes from 0 to 7.
   reg [2:0] counter;
 
-  function is_reset (input [3:0] a);
+  function is_reset (input [8:0] a);
     begin
-      is_reset = ~(a[0] & ~a[1] & a[2] & ~a[3]);
+      is_reset = (a != 8'b01010101);
     end
   endfunction
 
@@ -64,10 +64,7 @@ module krasin_3_bit_8_channel_pwm_driver (
   always @(posedge clk) begin
     // if reset, set counter and pwm levels to 0
     if (is_reset(reset_canary)) begin
-      reset_canary[0] <= 1;
-      reset_canary[1] <= 0;
-      reset_canary[2] <= 1;
-      reset_canary[3] <= 0;
+      reset_canary = 8'b01010101;
       counter <= 0;
       pwm0_level <= 0;
       pwm1_level <= 0;
