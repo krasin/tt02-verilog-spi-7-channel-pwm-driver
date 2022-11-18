@@ -39,6 +39,6 @@ module krasin_3_bit_8_channel_pwm_driver #( parameter MAX_COUNT = 1000 ) (
     end
 
     // instantiate segment display
-    seg7 seg7(.counter(digit), .segments(led_out));
+    //seg7 seg7(.counter(digit), .segments(led_out));
 
 endmodule
