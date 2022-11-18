@@ -26,7 +26,7 @@ documentation:
   picture:      ""      # relative path to a picture in your repository
   inputs:               # a description of what the inputs do
     - clock
-    - pset # when 1, the value for the output pin with address=addr0+2*addr1+4*addr2 is set to the level=level0+2*level1+4*level2. When 0, the chip will drive pins according to previously set levels.
+    - pset # when 1, the value for the output pin with address=addr0+2*addr1+4*addr2 is set to the level=level0+2*level1+4*level2. When 0, addr and level pins are ignored.
     - addr0 # Low bit for pin address
     - addr1 # Mid bit for pin address
     - addr2 # High bit for pin address
