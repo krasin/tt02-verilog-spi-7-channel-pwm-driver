@@ -6,7 +6,7 @@ module krasin_3_bit_8_channel_pwm_driver (
 );
     
   wire clk = io_in[0];
-  wire set = io_in[1];
+  wire pset = io_in[1];
   wire [2:0] addr = io_in[4:2];
   wire [2:0] level = io_in[7:5];
 
@@ -26,7 +26,7 @@ module krasin_3_bit_8_channel_pwm_driver (
 
   function is_reset (input [3:0] a);
     begin
-      is_reset = ~(a[0] & ~a[1] & a[2] & ~a[2]);
+      is_reset = ~(a[0] & ~a[1] & a[2] & ~a[3]);
     end
   endfunction
 
@@ -45,14 +45,20 @@ module krasin_3_bit_8_channel_pwm_driver (
   reg [2:0] pwm6_level;
   reg [2:0] pwm7_level;
 
-  assign pwm_out[0] = (counter < pwm0_level);
-  assign pwm_out[1] = (counter < pwm1_level);
-  assign pwm_out[2] = (counter < pwm2_level);
-  assign pwm_out[3] = (counter < pwm3_level);
-  assign pwm_out[4] = (counter < pwm4_level);
-  assign pwm_out[5] = (counter < pwm5_level);
-  assign pwm_out[6] = (counter < pwm6_level);
-  assign pwm_out[7] = (counter < pwm7_level);
+  function is_on(input [3:0] level, input[3:0] counter);
+    begin
+      is_on = (level > 0) & (counter < level+1);
+    end
+  endfunction // is_on
+
+  assign pwm_out[0] = is_on(pwm0_level, counter);
+  assign pwm_out[1] = is_on(pwm1_level, counter);
+  assign pwm_out[2] = is_on(pwm2_level, counter);
+  assign pwm_out[3] = is_on(pwm3_level, counter);
+  assign pwm_out[4] = is_on(pwm4_level, counter);
+  assign pwm_out[5] = is_on(pwm5_level, counter);
+  assign pwm_out[6] = is_on(pwm6_level, counter);
+  assign pwm_out[7] = is_on(pwm7_level, counter);
 
   // external clock is 1000Hz.
   always @(posedge clk) begin
@@ -71,7 +77,7 @@ module krasin_3_bit_8_channel_pwm_driver (
       pwm5_level <= 0;
       pwm6_level <= 0;
       pwm7_level <= 0;
-    end else begin
+    end else begin // if (is_reset(reset_canary))
       if (counter == 7) begin
         // Roll over.
         counter <= 0;
@@ -79,7 +85,8 @@ module krasin_3_bit_8_channel_pwm_driver (
         // increment counter
         counter <= counter + 1'b1;
       end
-      if (set) begin
+      if (pset) begin
+        //pwm0_level <= 7;
         case (addr)
           0: pwm0_level <= level;
           1: pwm1_level <= level;
