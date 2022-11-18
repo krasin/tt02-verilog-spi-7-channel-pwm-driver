@@ -47,7 +47,7 @@ module krasin_3_bit_8_channel_pwm_driver (
 
   function is_on(input [3:0] level, input[3:0] counter);
     begin
-      is_on = (level > 0) & (counter < level+1);
+      is_on = (counter < level);
     end
   endfunction // is_on
 
@@ -75,7 +75,7 @@ module krasin_3_bit_8_channel_pwm_driver (
       pwm6_level <= 0;
       pwm7_level <= 0;
     end else begin // if (is_reset(reset_canary))
-      if (counter == 7) begin
+      if (counter == 6) begin
         // Roll over.
         counter <= 0;
       end else begin
@@ -83,7 +83,6 @@ module krasin_3_bit_8_channel_pwm_driver (
         counter <= counter + 1'b1;
       end
       if (pset) begin
-        //pwm0_level <= 7;
         case (addr)
           0: pwm0_level <= level;
           1: pwm1_level <= level;
