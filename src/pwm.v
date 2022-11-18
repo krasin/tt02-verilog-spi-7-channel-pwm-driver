@@ -1,6 +1,6 @@
 `default_nettype none
 
-module krasin_3_bit_8_channel_pwm_driver #( parameter MAX_COUNT = 7 ) (
+module krasin_3_bit_8_channel_pwm_driver (
   input [7:0] io_in,
   output [7:0] io_out
 );
@@ -72,7 +72,7 @@ module krasin_3_bit_8_channel_pwm_driver #( parameter MAX_COUNT = 7 ) (
       pwm6_level <= 0;
       pwm7_level <= 0;
     end else begin
-      if (counter == MAX_COUNT) begin
+      if (counter == 7) begin
         // Roll over.
         counter <= 0;
       end else begin
