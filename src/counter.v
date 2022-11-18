@@ -1,6 +1,6 @@
 `default_nettype none
 
-module seven_segment_seconds #( parameter MAX_COUNT = 1000 ) (
+module krasin_3_bit_8_channel_pwm_driver #( parameter MAX_COUNT = 1000 ) (
   input [7:0] io_in,
   output [7:0] io_out
 );

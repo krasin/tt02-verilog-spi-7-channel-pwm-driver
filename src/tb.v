@@ -26,7 +26,7 @@ module tb (
     assign segments = outputs[6:0];
 
     // instantiate the DUT
-    seven_segment_seconds #(.MAX_COUNT(100)) seven_segment_seconds(
+    krasin_3_bit_8_channel_pwm_driver #(.MAX_COUNT(100)) krasin_3_bit_8_channel_pwm_driver(
         .io_in  (inputs),
         .io_out (outputs)
         );
