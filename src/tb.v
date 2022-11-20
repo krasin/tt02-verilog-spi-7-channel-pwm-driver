@@ -28,7 +28,7 @@ module tb (
     assign pwm_out = outputs[7:0];
 
     // instantiate the DUT
-    krasin_3_bit_8_channel_pwm_driver krasin_3_bit_8_channel_pwm_driver(
+    krasin_tt02_verilog_spi_8_channel_pwm_driver krasin_tt02_verilog_spi_8_channel_pwm_driver(
         .io_in  (inputs),
         .io_out (outputs)
         );

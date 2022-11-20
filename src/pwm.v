@@ -1,6 +1,6 @@
 `default_nettype none
 
-module krasin_3_bit_8_channel_pwm_driver (
+module krasin_tt02_verilog_spi_8_channel_pwm_driver (
   input [7:0] io_in,
   output [7:0] io_out
 );
