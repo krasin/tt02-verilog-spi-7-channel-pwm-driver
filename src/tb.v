@@ -9,10 +9,11 @@ that can be driven / tested by the cocotb test.py
 module tb (
     // testbench is controlled by test.py
     input 	 clk,
-    input 	 pset,
-    input [2:0]  addr,
-    input [2:0]  level,
-    output [7:0] pwm_out
+    input 	 reset,
+    input 	 sclk,
+    input 	 mosi,
+    output miso,
+    output [6:0] pwm_out
    );
 
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
@@ -23,9 +24,10 @@ module tb (
     end
 
     // wire up the inputs and outputs
-    wire [7:0] inputs = {level, addr, pset, clk};
+    wire [7:0] inputs = {4'b0, mosi, sclk, reset, clk};
     wire [7:0] outputs;
-    assign pwm_out = outputs[7:0];
+    assign miso = outputs[7];
+    assign pwm_out = outputs[6:0];
 
     // instantiate the DUT
     krasin_tt02_verilog_spi_7_channel_pwm_driver krasin_tt02_verilog_spi_7_channel_pwm_driver(
