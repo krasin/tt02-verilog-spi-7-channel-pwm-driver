@@ -94,7 +94,7 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
           // SPI clock changed. On rising edge we read from mosi, on falling edge, we write to miso.
           if (sclk) begin
             // Rising SCLK edge: reading from mosi.
-            in_buf <= (in_buf << 1) + mosi;
+            in_buf <= (in_buf << 1) | mosi;
             spi_counter <= spi_counter + 1'b1;
           end else begin // if (sclk)
             // Falling SCLK edge
