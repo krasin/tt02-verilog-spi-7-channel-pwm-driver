@@ -21,6 +21,9 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
   reg prev_sclk;
   // SPI counter that tracks 8 bit.
   reg [2:0] spi_counter;
+  // is_writing is set if we received a write command.
+  reg is_writing;
+  reg [2:0] write_addr;
 
   // Buffer from mosi.
   reg [7:0] in_buf;
@@ -77,6 +80,8 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
       out_buf <= 0;
       prev_sclk <= 0;
       spi_counter <= 0;
+      is_writing <= 0;
+      write_addr <= 0;
     end else begin // if (reset)
       if (counter == 254) begin
         // Roll over.
@@ -91,6 +96,8 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
         out_buf <= 0;
         prev_sclk <= 0;
         spi_counter <= 0;
+        is_writing <= 0;
+        write_addr <= 0;
       end else begin // if(cs)
         // The chip is selected.
         if (prev_sclk != sclk) begin
@@ -102,19 +109,43 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
           end else begin // if (sclk)
             // Falling SCLK edge
             if (spi_counter == 0) begin
-              // We need to output a new byte.
-              // Address is in the 3 lowest bits of in_buf.
-              case (in_buf[2:0])
-                0: out_buf <= pwm0_level;
-                1: out_buf <= pwm1_level;
-                2: out_buf <= pwm2_level;
-                3: out_buf <= pwm3_level;
-                4: out_buf <= pwm4_level;
-                5: out_buf <= pwm5_level;
-                6: out_buf <= pwm6_level;
-                // This pwm channel does not exist.
-                7: out_buf <= 8'b0;
-              endcase
+              if (is_writing) begin
+                // Writing. We saved the addr, now
+                 case (write_addr)
+                    0: pwm0_level <= in_buf;
+                    1: pwm1_level <= in_buf;
+                    2: pwm2_level <= in_buf;
+                    3: pwm3_level <= in_buf;
+                    4: pwm4_level <= in_buf;
+                    5: pwm5_level <= in_buf;
+                    6: pwm6_level <= in_buf;
+                 endcase // case (write_addr)
+                 // We output the saved value and reset.
+                 out_buf <= in_buf;
+                 is_writing <= 0;
+                 write_addr <= 0;
+              end else begin // if (is_writing)
+                if (in_buf[7]) begin
+                  // We're writing, but the value will come as the next byte.
+                  is_writing <= 1;
+                  write_addr <= in_buf[2:0];
+                end else begin // if (in_buf[7])
+                  // Reading.
+                  // We need to output a new byte.
+                  // Address is in the 3 lowest bits of in_buf.
+                  case (in_buf[2:0])
+                    0: out_buf <= pwm0_level;
+                    1: out_buf <= pwm1_level;
+                    2: out_buf <= pwm2_level;
+                    3: out_buf <= pwm3_level;
+                    4: out_buf <= pwm4_level;
+                    5: out_buf <= pwm5_level;
+                    6: out_buf <= pwm6_level;
+                    // This pwm channel does not exist.
+                    7: out_buf <= 8'b0;
+                  endcase // case (in_buf[2:0])
+                end
+              end // if (is_writing)
             end else begin // if (spi_counter == 0)
               // Advancing out_buf, so that miso sees a new value.
              out_buf <= out_buf >> 1;
