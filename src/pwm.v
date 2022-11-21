@@ -19,11 +19,11 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
   // Previous value of sclk.
   // This is to track SPI clock transitions within the main clock trigger.
   reg prev_sclk;
-  // SPI counter that tracks 16 bit.
-  reg [3:0] spi_counter;
+  // SPI counter that tracks 8 bit.
+  reg [2:0] spi_counter;
 
   // Buffer from mosi.
-  reg [15:0] in_buf;
+  reg [7:0] in_buf;
   // Buffer for miso.
   reg [7:0] out_buf;
 
