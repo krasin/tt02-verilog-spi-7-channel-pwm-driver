@@ -143,12 +143,8 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
                     1: out_buf <= pwm1_level;
                     2: out_buf <= pwm2_level;
                     3: out_buf <= pwm3_level;
-		    // TODO: reenable channel 4.
-		    4: out_buf <= 8'b0;
+		    // TODO: reenable channel 4, 5, 6.
                     //4: out_buf <= pwm4_level;
-		    // TODO: reenable channels 5 and 6.
-		    5: out_buf <= 8'b0;
-		    6: out_buf <= 8'b0;
                     //5: out_buf <= pwm5_level;
                     //6: out_buf <= pwm6_level;
                     // This pwm channel does not exist.
