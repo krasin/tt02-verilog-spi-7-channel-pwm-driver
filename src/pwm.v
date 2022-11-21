@@ -41,7 +41,7 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
   // 1 means that PWM will be on for just 1 clock cycle and then off for the other 254, giving 1/255 on average.
   // 254 means 254/255 on.
   // 255 means always on.
-  reg [7:0] pwm_level[2:0];
+  reg [7:0] pwm_level[3:0];
 
   function is_on(input [7:0] level, input[7:0] counter);
      begin
@@ -51,10 +51,8 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
 
   assign pwm_out[0] = is_on(pwm_level[0], counter);
   assign pwm_out[1] = is_on(pwm_level[1], counter);
-  assign pwm_out[2] = is_on(pwm_level[1], counter);
-  // TODO: reenable channel 3.
-  assign pwm_out[3] = 0;
-  //assign pwm_out[3] = is_on(pwm3_level, counter);
+  assign pwm_out[2] = is_on(pwm_level[2], counter);
+  assign pwm_out[3] = is_on(pwm_level[3], counter);
   // TODO: reenable channel 4.
   assign pwm_out[4] = 0;
   //assign pwm_out[4] = is_on(pwm4_level, counter);
@@ -72,9 +70,7 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
       pwm_level[0] <= 0;
       pwm_level[1] <= 0;
       pwm_level[2] <= 0;
-      //pwm1_level <= 0;
-      //pwm2_level <= 0;
-      // pwm3_level <= 0;
+      pwm_level[3] <= 0;
       // pwm4_level <= 0;
       // pwm5_level <= 0;
       // pwm6_level <= 0;
