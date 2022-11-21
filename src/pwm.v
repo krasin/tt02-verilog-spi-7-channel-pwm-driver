@@ -47,8 +47,8 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
   reg [7:0] pwm2_level;
   reg [7:0] pwm3_level;
   reg [7:0] pwm4_level;
-  reg [7:0] pwm5_level;
-  reg [7:0] pwm6_level;
+  // reg [7:0] pwm5_level;
+  // reg [7:0] pwm6_level;
 
   function is_on(input [7:0] level, input[7:0] counter);
      begin
@@ -61,8 +61,11 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
   assign pwm_out[2] = is_on(pwm2_level, counter);
   assign pwm_out[3] = is_on(pwm3_level, counter);
   assign pwm_out[4] = is_on(pwm4_level, counter);
-  assign pwm_out[5] = is_on(pwm5_level, counter);
-  assign pwm_out[6] = is_on(pwm6_level, counter);
+  // TODO: reenable channels 5 and 6.
+  assign pwm_out[5] = 0;
+  assign pwm_out[6] = 0;
+  // assign pwm_out[5] = is_on(pwm5_level, counter);
+  // assign pwm_out[6] = is_on(pwm6_level, counter);
 
   // external clock is 1000Hz.
   always @(posedge clk) begin
@@ -74,8 +77,8 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
       pwm2_level <= 0;
       pwm3_level <= 0;
       pwm4_level <= 0;
-      pwm5_level <= 0;
-      pwm6_level <= 0;
+      // pwm5_level <= 0;
+      // pwm6_level <= 0;
       in_buf <= 0;
       out_buf <= 0;
       prev_sclk <= 0;
@@ -139,8 +142,11 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
                     2: out_buf <= pwm2_level;
                     3: out_buf <= pwm3_level;
                     4: out_buf <= pwm4_level;
-                    5: out_buf <= pwm5_level;
-                    6: out_buf <= pwm6_level;
+		    // TODO: reenable channels 5 and 6.
+		    5: out_buf <= 8'b0;
+		    6: out_buf <= 8'b0;
+                    //5: out_buf <= pwm5_level;
+                    //6: out_buf <= pwm6_level;
                     // This pwm channel does not exist.
                     7: out_buf <= 8'b0;
                   endcase // case (in_buf[2:0])
