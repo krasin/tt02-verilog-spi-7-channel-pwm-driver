@@ -36,19 +36,12 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
   // 8-bit PWM counter that goes from 0 to 254.
   reg [7:0] counter;
 
-  // PWM level for channel0.
+  // PWM levels for each channel.
   // 0 means always off.
   // 1 means that PWM will be on for just 1 clock cycle and then off for the other 254, giving 1/255 on average.
   // 254 means 254/255 on.
   // 255 means always on.
-  reg [7:0] pwm0_level;
-  // The rest of the channels.
-  reg [7:0] pwm1_level;
-  reg [7:0] pwm2_level;
-  //reg [7:0] pwm3_level;
-  // reg [7:0] pwm4_level;
-  // reg [7:0] pwm5_level;
-  // reg [7:0] pwm6_level;
+  reg [7:0] pwm_level[2:0];
 
   function is_on(input [7:0] level, input[7:0] counter);
      begin
@@ -56,9 +49,9 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
      end
   endfunction // is_on
 
-  assign pwm_out[0] = is_on(pwm0_level, counter);
-  assign pwm_out[1] = is_on(pwm1_level, counter);
-  assign pwm_out[2] = is_on(pwm2_level, counter);
+  assign pwm_out[0] = is_on(pwm_level[0], counter);
+  assign pwm_out[1] = is_on(pwm_level[1], counter);
+  assign pwm_out[2] = is_on(pwm_level[1], counter);
   // TODO: reenable channel 3.
   assign pwm_out[3] = 0;
   //assign pwm_out[3] = is_on(pwm3_level, counter);
@@ -76,9 +69,11 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
     // if reset, set counter and pwm levels to 0
     if (reset) begin
       counter <= 0;
-      pwm0_level <= 0;
-      pwm1_level <= 0;
-      pwm2_level <= 0;
+      pwm_level[0] <= 0;
+      pwm_level[1] <= 0;
+      pwm_level[2] <= 0;
+      //pwm1_level <= 0;
+      //pwm2_level <= 0;
       // pwm3_level <= 0;
       // pwm4_level <= 0;
       // pwm5_level <= 0;
@@ -118,15 +113,17 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
             if (spi_counter == 0) begin
               if (is_writing) begin
                 // Writing. We saved the addr, now
-                case (write_addr)
-                  0: pwm0_level <= in_buf;
+                pwm_level[write_addr] <= in_buf;
+ 
+                //case (write_addr)
+                //  0: pwm0_level <= in_buf;
                 //  1: pwm1_level <= in_buf;
                 //  2: pwm2_level <= in_buf;
                 //  3: pwm3_level <= in_buf;
                 //  4: pwm4_level <= in_buf;
                 //  5: pwm5_level <= in_buf;
                 //  6: pwm6_level <= in_buf;
-                endcase // case (write_addr)
+                //endcase // case (write_addr)
                 // We output the saved value and reset.
                 out_buf <= in_buf;
                 is_writing <= 0;
@@ -140,18 +137,19 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
                   // Reading.
                   // We need to output a new byte.
                   // Address is in the 3 lowest bits of in_buf.
-                  case (in_buf[2:0])
-                    0: out_buf <= pwm0_level;
-                    1: out_buf <= pwm1_level;
-                    2: out_buf <= pwm2_level;
+                  out_buf <= pwm_level[in_buf[2:0]];
+                  //case (in_buf[2:0])
+                  //  0: out_buf <= pwm0_level;
+                  //  1: out_buf <= pwm1_level;
+                  //  2: out_buf <= pwm2_level;
                     //3: out_buf <= pwm3_level;
 		    // TODO: reenable channel 4, 5, 6.
                     //4: out_buf <= pwm4_level;
                     //5: out_buf <= pwm5_level;
                     //6: out_buf <= pwm6_level;
                     // This pwm channel does not exist.
-                    7: out_buf <= 8'b0;
-                  endcase // case (in_buf[2:0])
+                    //7: out_buf <= 8'b0;
+                  //endcase // case (in_buf[2:0])
                 end
               end // if (is_writing)
             end else begin // if (spi_counter == 0)
