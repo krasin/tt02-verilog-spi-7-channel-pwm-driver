@@ -11,8 +11,9 @@ module tb (
     input 	 clk,
     input 	 reset,
     input 	 sclk,
+    input        cs,
     input 	 mosi,
-    output miso,
+    output 	 miso,
     output [6:0] pwm_out
    );
 
@@ -24,7 +25,7 @@ module tb (
     end
 
     // wire up the inputs and outputs
-    wire [7:0] inputs = {4'b0, mosi, sclk, reset, clk};
+    wire [7:0] inputs = {3'b0, mosi, cs, sclk, reset, clk};
     wire [7:0] outputs;
     assign miso = outputs[7];
     assign pwm_out = outputs[6:0];

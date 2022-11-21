@@ -19,8 +19,7 @@ async def test_zeros_by_default(dut):
     await ClockCycles(dut.clk, 1)
     print("dut.out_pwm: {}, miso: {}".format(dut.pwm_out.value, dut.miso.value))
     assert int(dut.pwm_out.value) == 0
-    # TODO: reenable MISO check
-    #assert int(dut.miso.value) == 0
+    assert int(dut.miso.value) == 0
 
 #@cocotb.test()
 #async def test_pwm0_full_on(dut):

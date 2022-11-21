@@ -33,7 +33,6 @@ documentation:
     - reserved
     - reserved
     - reserved
-    - reserved
   outputs:
     - out0 # channel 0 for PWM
     - out1 # channel 1 for PWM
