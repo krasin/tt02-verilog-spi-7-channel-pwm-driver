@@ -11,8 +11,8 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
   wire cs = io_in[3];
   wire mosi = io_in[4];
 
-  wire [6:0] pwm_out;
-  assign io_out[6:0] = pwm_out;
+  wire [3:0] pwm_out;
+  assign io_out[3:0] = pwm_out;
   wire miso;
   assign io_out[7] = miso;
 
@@ -53,9 +53,6 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
   assign pwm_out[1] = is_on(pwm_level[1], counter);
   assign pwm_out[2] = is_on(pwm_level[2], counter);
   assign pwm_out[3] = is_on(pwm_level[3], counter);
-  assign pwm_out[4] = 0;
-  assign pwm_out[5] = 0;
-  assign pwm_out[6] = 0;
 
   // external clock is 1000Hz.
   always @(posedge clk) begin
