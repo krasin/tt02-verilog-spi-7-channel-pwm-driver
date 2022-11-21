@@ -100,8 +100,25 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
             in_buf <= (in_buf << 1) + mosi;
             spi_counter <= spi_counter + 1'b1;
           end else begin // if (sclk)
-            // Falling SCLK edge: advancing out_buf, so that miso sees a new value.
-            out_buf <= out_buf >> 1;
+            // Falling SCLK edge
+            if (spi_counter == 0) begin
+              // We need to output a new byte.
+              // Address is in the 3 lowest bits of in_buf.
+              case (in_buf[2:0])
+                0: out_buf <= pwm0_level;
+                1: out_buf <= pwm1_level;
+                2: out_buf <= pwm2_level;
+                3: out_buf <= pwm3_level;
+                4: out_buf <= pwm4_level;
+                5: out_buf <= pwm5_level;
+                6: out_buf <= pwm6_level;
+                // This pwm channel does not exist.
+                7: out_buf <= 8'b0;
+              endcase
+            end else begin // if (spi_counter == 0)
+              // Advancing out_buf, so that miso sees a new value.
+             out_buf <= out_buf >> 1;
+            end
           end
           prev_sclk <= sclk;
         end
