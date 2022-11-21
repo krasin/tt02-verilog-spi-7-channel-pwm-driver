@@ -23,7 +23,7 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
   reg [2:0] spi_counter;
   // is_writing is set if we received a write command.
   reg is_writing;
-  reg [2:0] write_addr;
+  //reg [2:0] write_addr;
 
   // Buffer from mosi.
   reg [7:0] in_buf;
@@ -81,7 +81,7 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
       prev_sclk <= 0;
       spi_counter <= 0;
       is_writing <= 0;
-      write_addr <= 0;
+      //write_addr <= 0;
     end else begin // if (reset)
       if (counter == 254) begin
         // Roll over.
@@ -97,7 +97,7 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
         prev_sclk <= 0;
         spi_counter <= 0;
         is_writing <= 0;
-        write_addr <= 0;
+        //write_addr <= 0;
       end else begin // if(cs)
         // The chip is selected.
         if (prev_sclk != sclk) begin
@@ -111,24 +111,24 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
             if (spi_counter == 0) begin
               if (is_writing) begin
                 // Writing. We saved the addr, now
-                 case (write_addr)
-                    0: pwm0_level <= in_buf;
-                    1: pwm1_level <= in_buf;
-                    2: pwm2_level <= in_buf;
-                    3: pwm3_level <= in_buf;
-                    4: pwm4_level <= in_buf;
-                    5: pwm5_level <= in_buf;
-                    6: pwm6_level <= in_buf;
-                 endcase // case (write_addr)
-                 // We output the saved value and reset.
-                 out_buf <= in_buf;
-                 is_writing <= 0;
-                 write_addr <= 0;
+                //case (write_addr)
+                //  0: pwm0_level <= in_buf;
+                //  1: pwm1_level <= in_buf;
+                //  2: pwm2_level <= in_buf;
+                //  3: pwm3_level <= in_buf;
+                //  4: pwm4_level <= in_buf;
+                //  5: pwm5_level <= in_buf;
+                //  6: pwm6_level <= in_buf;
+                //endcase // case (write_addr)
+                // We output the saved value and reset.
+                out_buf <= in_buf;
+                is_writing <= 0;
+                //write_addr <= 0;
               end else begin // if (is_writing)
                 if (in_buf[7]) begin
                   // We're writing, but the value will come as the next byte.
                   is_writing <= 1;
-                  write_addr <= in_buf[2:0];
+                  //write_addr <= in_buf[2:0];
                 end else begin // if (in_buf[7])
                   // Reading.
                   // We need to output a new byte.
