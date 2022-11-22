@@ -21,6 +21,30 @@ async def test_zeros_by_default(dut):
     assert int(dut.pwm_out.value) == 0
     assert int(dut.miso.value) == 0
 
+@cocotb.test()
+async def test_zeros_by_default_sclk(dut):
+  dut._log.info("start")
+  clock = Clock(dut.clk, 10, units="us")
+  cocotb.start_soon(clock.start())
+
+  dut._log.info("first cycle")
+  dut.reset.value = 1
+  dut.sclk.value = 1
+  await ClockCycles(dut.clk, 1)
+  dut.reset.value = 0
+  dut._log.info("check that all pins are zeros and stay like that, even when SPI clock is ticking")
+  for i in range(200):
+    # SPI clock ticks once per two regular clock cycles in this test.
+    if (i / 2) % 2 == 0:
+      dut.sclk.value = 0
+    else:
+      dut.sclk.value = 1
+    await ClockCycles(dut.clk, 1)
+
+    print("i={}, dut.out_pwm: {}, miso: {}".format(i, dut.pwm_out.value, dut.miso.value))
+    assert int(dut.pwm_out.value) == 0
+    assert int(dut.miso.value) == 0
+
 #@cocotb.test()
 #async def test_pwm0_full_on(dut):
 #  dut._log.info("start")
