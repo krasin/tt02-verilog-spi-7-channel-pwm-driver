@@ -11,8 +11,9 @@ async def test_zeros_by_default(dut):
 
   dut._log.info("first cycle")
   dut.reset.value = 1
-  dut.sclk.value = 1
+  dut.cs.value = 1
   await ClockCycles(dut.clk, 1)
+  dut.mosi.value = 0
   dut.reset.value = 0
   dut._log.info("check that all pins are zeros and stay like that")
   for i in range(10):
@@ -29,9 +30,10 @@ async def test_zeros_by_default_sclk(dut):
 
   dut._log.info("first cycle")
   dut.reset.value = 1
-  dut.sclk.value = 1
+  dut.cs.value = 0
   await ClockCycles(dut.clk, 1)
   dut.reset.value = 0
+  dut.mosi.value = 0
   dut._log.info("check that all pins are zeros and stay like that, even when SPI clock is ticking")
   for i in range(200):
     # SPI clock ticks once per two regular clock cycles in this test.
