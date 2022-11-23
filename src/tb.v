@@ -14,7 +14,7 @@ module tb (
     input        cs,
     input 	 mosi,
     output 	 miso,
-    output [3:0] pwm_out
+    output [6:0] pwm_out
    );
 
     // this part dumps the trace to a vcd file that can be viewed with GTKWave
@@ -28,7 +28,7 @@ module tb (
     wire [7:0] inputs = {3'b0, mosi, cs, sclk, reset, clk};
     wire [7:0] outputs;
     assign miso = outputs[7];
-    assign pwm_out = outputs[3:0];
+    assign pwm_out = outputs[6:0];
 
     // instantiate the DUT
     krasin_tt02_verilog_spi_7_channel_pwm_driver krasin_tt02_verilog_spi_7_channel_pwm_driver(
