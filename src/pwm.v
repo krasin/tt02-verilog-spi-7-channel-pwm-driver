@@ -80,10 +80,8 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
         counter <= counter + 1'b1;
       end
     end // if (reset)
-  end // always @ (poseedge clk)
 
-  // SPI reset logic.
-  always @(posedge clk) begin
+    // SPI reset logic.
     if (reset || cs) begin
       // The chip is not selected or we are being reset. Reset all SPI registers.
       in_buf <= 0;
@@ -94,10 +92,8 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
       is_reading <= 0;
       cur_addr <= 0;
     end // if (reset || cs)
-  end // always @ (posedge clk)
 
-  // regular SPI logic.
-  always @(posedge clk) begin
+    // regular SPI logic.
     if (~reset && ~cs && (prev_sclk != sclk)) begin
       // The chip is selected and the SPI clock changed.
       // On rising edge we read from mosi, on falling edge, we write to miso.
