@@ -11,8 +11,8 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
   wire cs = io_in[3];
   wire mosi = io_in[4];
 
-  wire [6:0] pwm_out;
-  assign io_out[6:0] = pwm_out;
+  wire [3:0] pwm_out;
+  assign io_out[3:0] = pwm_out;
   wire miso;
   assign io_out[7] = miso;
 
@@ -23,7 +23,7 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
   reg [2:0] spi_counter;
   // is_writing is set if we received a write command.
   reg is_writing;
-  reg [2:0] write_addr;
+  reg [1:0] write_addr;
 
   // Buffer from mosi.
   reg [7:0] in_buf;
@@ -41,7 +41,7 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
   // 1 means that PWM will be on for just 1 clock cycle and then off for the other 254, giving 1/255 on average.
   // 254 means 254/255 on.
   // 255 means always on.
-  reg [7:0] pwm_level[6:0];
+  reg [7:0] pwm_level[1:0];
 
   function is_on(input [7:0] level, input[7:0] counter);
      begin
@@ -51,11 +51,8 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
 
   assign pwm_out[0] = is_on(pwm_level[0], counter);
   assign pwm_out[1] = is_on(pwm_level[1], counter);
-  assign pwm_out[2] = is_on(pwm_level[2], counter);
-  assign pwm_out[3] = is_on(pwm_level[3], counter);
-  assign pwm_out[4] = is_on(pwm_level[4], counter);
-  assign pwm_out[5] = is_on(pwm_level[5], counter);
-  assign pwm_out[6] = is_on(pwm_level[6], counter);
+  assign pwm_out[2] = 0;
+  assign pwm_out[3] = 0;
 
   // external clock is 1000Hz.
   always @(posedge clk) begin
@@ -64,11 +61,6 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
       counter <= 0;
       pwm_level[0] <= 0;
       pwm_level[1] <= 0;
-      pwm_level[2] <= 0;
-      pwm_level[3] <= 0;
-      pwm_level[4] <= 0;
-      pwm_level[5] <= 0;
-      pwm_level[6] <= 0;
       in_buf <= 0;
       out_buf <= 0;
       prev_sclk <= 0;
@@ -113,12 +105,12 @@ module krasin_tt02_verilog_spi_7_channel_pwm_driver (
                 if (in_buf[7]) begin
                   // We're writing, but the value will come as the next byte.
                   is_writing <= 1;
-                  write_addr <= in_buf[2:0];
+                  write_addr <= in_buf[0];
                 end else begin // if (in_buf[7])
                   // Reading.
                   // We need to output a new byte.
-                  // Address is in the 3 xlowest bits of in_buf.
-                  out_buf <= pwm_level[in_buf[2:0]];
+                  // Address is in the lowest bit of in_buf.
+                  out_buf <= pwm_level[in_buf[0]];
                 end
               end // if (is_writing)
             end else begin // if (spi_counter == 0)
